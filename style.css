@@ -1,0 +1,121 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Poppins', sans-serif;
+}
+
+body {
+  background: #0b0b0b;
+  color: #fff;
+}
+
+/* TOPBAR */
+.topbar {
+  display: flex;
+  justify-content: space-between;
+  padding: 15px 30px;
+  background: #111;
+  border-bottom: 1px solid #222;
+}
+
+.topbar nav a {
+  margin: 0 10px;
+  color: #ccc;
+  text-decoration: none;
+}
+
+.topbar nav a:hover {
+  color: gold;
+}
+
+.status {
+  color: red;
+  font-weight: bold;
+}
+
+/* LAYOUT */
+.container {
+  display: grid;
+  grid-template-columns: 1fr 2fr 1fr;
+  gap: 20px;
+  padding: 20px;
+}
+
+/* PLAYER */
+.player {
+  background: #111;
+  padding: 20px;
+  border-radius: 10px;
+  text-align: center;
+}
+
+.player button {
+  background: gold;
+  border: none;
+  padding: 10px 20px;
+  font-size: 18px;
+  cursor: pointer;
+}
+
+/* BANNER */
+.banner {
+  background: linear-gradient(135deg, #1a1a1a, #000);
+  border-radius: 10px;
+  padding: 50px;
+  text-align: center;
+}
+
+.banner h1 {
+  font-size: 40px;
+  color: gold;
+}
+
+/* CHAT */
+.chat {
+  background: #111;
+  padding: 15px;
+  border-radius: 10px;
+}
+
+.messages {
+  height: 200px;
+  overflow-y: auto;
+  margin-bottom: 10px;
+}
+
+.messages div {
+  margin-bottom: 5px;
+  font-size: 14px;
+}
+
+.chat input {
+  width: 70%;
+  padding: 8px;
+}
+
+.chat button {
+  padding: 8px;
+  background: gold;
+  border: none;
+}
+
+/* SCHEDULE */
+.schedule {
+  grid-column: span 3;
+  background: #111;
+  padding: 20px;
+  border-radius: 10px;
+}
+
+.schedule li {
+  padding: 5px 0;
+  border-bottom: 1px solid #222;
+}
+
+/* FOOTER */
+footer {
+  text-align: center;
+  padding: 15px;
+  background: #111;
+}
