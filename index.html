@@ -2,85 +2,90 @@
 <html lang="pt-br">
 <head>
 <meta charset="UTF-8">
-<title>BUTECO PREMIUM</title>
+<title>Buteco Premium</title>
 
 <style>
 body {
-  margin: 0;
-  font-family: Arial;
-  background: #0a0a0a;
-  color: #fff;
+  margin:0;
+  font-family:Arial;
+  background:#0a0a0a;
+  color:#fff;
 }
 
 header {
-  background: #111;
-  padding: 15px;
-  text-align: center;
-  border-bottom: 2px solid gold;
+  text-align:center;
+  padding:15px;
+  border-bottom:2px solid gold;
 }
 
-h1 {
-  color: gold;
-}
+h1 { color:gold; }
 
 .container {
-  display: grid;
-  grid-template-columns: 300px 1fr 300px;
-  gap: 15px;
-  padding: 15px;
+  display:grid;
+  grid-template-columns:300px 1fr 300px;
+  gap:15px;
+  padding:15px;
 }
 
 /* PLAYER */
 .player {
-  background: #111;
-  padding: 15px;
-  border-radius: 10px;
+  background:#111;
+  padding:15px;
+  border-radius:15px;
 }
 
-.player img {
-  width: 100%;
-  border-radius: 10px;
+.cover-container {
+  position:relative;
 }
 
-button {
-  background: gold;
-  border: none;
-  padding: 10px;
-  width: 100%;
-  cursor: pointer;
-  margin-top: 10px;
+.cover-container img {
+  width:100%;
+  border-radius:15px;
+}
+
+.overlay {
+  position:absolute;
+  top:0;
+  left:0;
+  width:100%;
+  height:100%;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  background:rgba(0,0,0,0.5);
+}
+
+#playBtn {
+  font-size:30px;
+  background:gold;
+  border:none;
+  border-radius:50%;
+  width:70px;
+  height:70px;
 }
 
 /* CHAT */
 .chat {
-  background: #111;
-  padding: 10px;
-  border-radius: 10px;
+  background:#111;
+  padding:10px;
 }
 
 /* HISTÓRICO */
 .history {
-  background: #111;
-  padding: 10px;
-  border-radius: 10px;
-  height: 200px;
-  overflow-y: auto;
+  background:#111;
+  padding:10px;
+  height:250px;
+  overflow:auto;
 }
 
 /* SOCIAL */
 .social a {
-  display: block;
-  background: #222;
-  margin: 5px 0;
-  padding: 10px;
-  text-decoration: none;
-  color: #fff;
-  border-radius: 5px;
-}
-
-.social a:hover {
-  background: gold;
-  color: #000;
+  display:block;
+  background:#222;
+  margin:5px 0;
+  padding:10px;
+  color:#fff;
+  text-decoration:none;
 }
 </style>
 </head>
@@ -89,35 +94,38 @@ button {
 
 <header>
   <h1>🎙️ BUTECO PREMIUM</h1>
-  <p>24 HORAS COM VOCÊ</p>
 </header>
 
 <div class="container">
 
   <!-- PLAYER -->
   <div class="player">
-    <img id="cover" src="https://via.placeholder.com/300x300?text=Sem+Capa">
+    <div class="cover-container">
+      <img id="cover" src="https://via.placeholder.com/300">
+      <div class="overlay">
+        <button onclick="togglePlay()" id="playBtn">▶</button>
+      </div>
+    </div>
+
     <h3 id="music">Carregando...</h3>
-    <audio id="audio" src="SEU_STREAM_AQUI" controls autoplay></audio>
-    <button onclick="play()">▶️ Play</button>
+    <audio id="audio"></audio>
   </div>
 
-  <!-- CHAT (NO LUGAR DA IMAGEM) -->
+  <!-- CHAT -->
   <div class="chat">
     <iframe src="https://xat.com/embed/chat.php#id=220535412&gn=Butecopremium"
-    width="100%" height="500" frameborder="0"></iframe>
+    width="100%" height="500"></iframe>
   </div>
 
   <!-- LADO DIREITO -->
   <div>
 
     <div class="history">
-      <h3>🎵 Histórico</h3>
+      <h3>Histórico</h3>
       <ul id="historyList"></ul>
     </div>
 
     <div class="social">
-      <h3>🌐 Redes</h3>
       <a href="#">Facebook</a>
       <a href="#">Instagram</a>
       <a href="#">Discord</a>
@@ -129,9 +137,34 @@ button {
 
 <script>
 const api = "http://igng.com.br/api/TnpBeE9BPT0rWg==";
-
 let history = [];
 
+/* TOKEN + STREAM */
+async function iniciarStream() {
+  const res = await fetch("/token");
+  const data = await res.json();
+
+  document.getElementById("audio").src =
+    "/stream?token=" + data.token;
+}
+
+iniciarStream();
+
+/* PLAYER */
+function togglePlay() {
+  let audio = document.getElementById("audio");
+  let btn = document.getElementById("playBtn");
+
+  if (audio.paused) {
+    audio.play();
+    btn.innerHTML = "⏸";
+  } else {
+    audio.pause();
+    btn.innerHTML = "▶";
+  }
+}
+
+/* API música */
 async function getMusic() {
   try {
     const res = await fetch(api);
@@ -141,7 +174,6 @@ async function getMusic() {
 
     document.getElementById("music").innerText = musica;
 
-    // histórico
     if (!history.includes(musica)) {
       history.unshift(musica);
       if (history.length > 10) history.pop();
@@ -157,12 +189,10 @@ async function getMusic() {
 
     buscarCapa(musica);
 
-  } catch (e) {
-    console.log("Erro API");
-  }
+  } catch {}
 }
 
-// BUSCAR CAPA (Apple Music fake search)
+/* CAPA */
 async function buscarCapa(nome) {
   try {
     let url = `https://itunes.apple.com/search?term=${encodeURIComponent(nome)}&limit=1`;
@@ -170,14 +200,30 @@ async function buscarCapa(nome) {
     let data = await res.json();
 
     if (data.results.length > 0) {
-      document.getElementById("cover").src = data.results[0].artworkUrl100;
+      document.getElementById("cover").src =
+        data.results[0].artworkUrl100.replace("100x100","600x600");
     }
   } catch {}
 }
 
-function play() {
-  document.getElementById("audio").play();
-}
+/* DEVTOOLS DETECT */
+setInterval(() => {
+  if (window.outerWidth - window.innerWidth > 160 ||
+      window.outerHeight - window.innerHeight > 160) {
+    document.body.innerHTML = "<h1>🔒 Bloqueado</h1>";
+  }
+}, 1000);
+
+/* BLOQUEIOS */
+document.addEventListener("contextmenu", e => e.preventDefault());
+
+document.onkeydown = function(e) {
+  if (e.keyCode == 123 ||
+     (e.ctrlKey && e.shiftKey && e.keyCode == 73) ||
+     (e.ctrlKey && e.keyCode == 85)) {
+    return false;
+  }
+};
 
 setInterval(getMusic, 10000);
 getMusic();
